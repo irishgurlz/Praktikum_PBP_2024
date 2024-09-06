@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Form Tambah Data Produk</title>
+    <script>
+        function validateForm() {
+            var isValid = true;
+            var name = document.forms["formLogin"]["fName"];
+            var desc = document.forms["formLogin"]["fDesc"];
+            var category = document.forms["formLogin"]["fCategory"];
+            var harGrosir = document.forms["formLogin"]["fHargaGrosir"];
+            if(name.checkValidity() == false || desc.checkValidity() == false){
+                document.getElementById("errName").innerHTML = name.validationMessage;
+                document.getElementById("errDesc").innerHTML = desc.validationMessage;
+                return false;
+            }
+            if (!validateCaptcha()) {
+                isValid = false;
+            }
+            if (!validateJasaKirim()) {
+                isValid = false;
+            }
+            if (isValid) {
+            Array.from(document.getElementsByTagName('form')).forEach(form => {
+                form.reset();
+            })
+        }
+            generateCaptcha();
+
+        }
+
+        function kategoriOp() {
+            var option = document.forms["formLogin"]["fCategory"].value;
+            var subCategory = document.getElementById("SubBaju");
+            subCategory.innerHTML = "";
+
+            if (option === "Baju") {
+                subCategory.innerHTML += '<option value="Baju Pria">Baju Pria</option>';
+                subCategory.innerHTML += '<option value="Baju Wanita">Baju Wanita</option>';
+                subCategory.innerHTML += '<option value="Baju Anak">Baju Anak</option>';
+            }
+            if (option === "Elektronik") {
+                subCategory.innerHTML += '<option value="Mesin Cuci">Mesin Cuci</option>';
+                subCategory.innerHTML += '<option value="Kulkas">Kulkas</option>';
+                subCategory.innerHTML += '<option value="AC">AC</option>';
+            }
+            if (option === "Alat Tulis") {
+                subCategory.innerHTML += '<option value="Kertas">Kertas</option>';
+                subCategory.innerHTML += '<option value="Map">Map</option>';
+                subCategory.innerHTML += '<option value="Pulpen">Pulpen</option>';
+            }
+        }
+
+        function toggleHargaGrosir(isVisible) {
+            var hargaGrosirInput = document.getElementById("fHargaGrosir");
+        
+            if (isVisible) {
+                hargaGrosirInput.style.display = "block";  
+            } else {
+                hargaGrosirInput.style.display = "none";   
+                hargaGrosirInput.value = "";               
+            }
+        }
+
+        function generateCaptcha() {
+            var captcha = '';
+            var charCode;
+        
+            for (let i = 0; i < 5; i++) {
+                var randomIndex = Math.floor(Math.random() * 52);
+                if (randomIndex < 26) {
+                    charCode = 65 + randomIndex; 
+                } else {
+                    charCode = 97 + (randomIndex - 26);
+                }
+                captcha += String.fromCharCode(charCode);
+            }
+        
+            document.getElementById('captcha-display').value = captcha; 
+            return captcha;
+        }
+
+        window.onload = function() {
+            generateCaptcha();
+        }
+
+        function validateCaptcha() {
+            var captchaGenerated = document.getElementById("captcha-display").value;
+            var captchaInput = document.getElementById("captcha").value;
+
+            if (captchaGenerated === captchaInput) {
+                document.getElementById("warningCaptcha").style.display = 'none';
+                return true;
+            } else {
+                document.getElementById("warningCaptcha").style.display = 'inline';
+                return false;
+            }
+        }
+
+        function validateJasaKirim() {
+            var checkBoxes = document.getElementsByClassName('fJasaKirim');
+            var checkedCount = Array.from(checkBoxes).filter(checkbox => checkbox.checked).length;
+            if (checkedCount >= 3) {
+                document.getElementById('jasa-kirim-warning').style.display = 'none';
+                return true;
+            } else {
+                document.getElementById('jasa-kirim-warning').style.display = 'inline';
+                return false;
+            }
+        }
+
+        function resetPage() {
+            var isValid = true;
+            if (isValid) {
+            Array.from(document.getElementsByTagName('form')).forEach(form => {
+                form.reset();
+            })
+            generateCaptcha();
+        }
+        }
+    </script>
+</head>
+<body>
+    <h2>Form Tambah Data Produk</h2>
+    <form name="formLogin" action="process.php" method="post">
+        <table>
+            <tr>
+                <td>Nama Produk:</td>
+                <td>
+                    <input type="text" name="fName" required="required" minlength="5" maxlength="30">
+                    <span id="errName"></span>
+                </td>
+            </tr>
+            <tr>
+                <td>Deskripsi:</td>
+                <td>
+                    <textarea name="fDesc" required="required" rows="10" cols="30" minlength="5" maxlength="30"></textarea>
+                    <span id="errDesc"></span>
+                </td>
+            </tr>
+            <tr>
+                <td>Kategori:</td>
+                <td>
+                    <select id="fCategory" name="fCategory" onchange="kategoriOp()" required>
+                        <option value="" disabled selected hidden>Pilih Kategori</option>
+                        <option value="Baju">Baju</option>
+                        <option value="Elektronik">Elektronik</option>
+                        <option value="Alat Tulis">Alat Tulis</option>
+                    </select>
+                    <span id="errCategory" style="color:red;"></span>
+                </td>
+            </tr>
+            <tr>
+                <td>Sub Kategori:</td>
+                <td>
+                    <select id="SubBaju">
+                        <option value="" disabled selected hidden>Pilih Sub Kategori</option>
+                    </select>
+                </td>
+            </tr>
+            <tr>
+                <td>Harga Satuan:</td>
+                <td>
+                    <input type="number" name="fHarga" required>
+                    <span id="errHarga" style="color:red;"></span>
+                </td>
+            </tr>
+            <tr>
+                <td>Grosir:</td>
+                <td>
+                    <input type="radio" name="fGrosir" value="Ya" required onclick="toggleHargaGrosir(true)">Ya
+                    <input type="radio" name="fGrosir" value="Tidak" required onclick="toggleHargaGrosir(false)">Tidak
+                </td>
+            </tr>
+            <tr>
+                <td>Harga Grosir:</td>
+                <td>
+                    <input type="number" id="fHargaGrosir" name="fHargaGrosir" style="display: none;">
+                    <span id="errGrosir" style="color:red;"></span>
+                </td>
+            </tr>
+            <tr>
+                <td>Jasa Kirim:</td>
+                <td>
+                    <input type="checkbox" class="fJasaKirim" value="JNE" required>JNE<br>
+                    <input type="checkbox" class="fJasaKirim" value="TIKI" required>TIKI<br>
+                    <input type="checkbox" class="fJasaKirim" value="SiCepat" required>SiCepat<br>
+                    <input type="checkbox" class="fJasaKirim" value="Ninja Express" required>Ninja Express<br>
+                    <input type="checkbox" class="fJasaKirim" value="Wahana" required>Wahana<br>
+                    <label id="jasa-kirim-warning" style="display:none; color:red;">Minimal 3</label>
+                </td>
+            </tr>
+            <tr>
+                <td>Captcha:</td>
+                <td>
+                    <input type="text" id="captcha-display" size="10" disabled>
+                    <input type="text" name="captcha" id="captcha" size="10">
+                    <br>
+                    <label id="warningCaptcha" style="display:none; color:red;">Captcha salah</label>
+                </td>
+            </tr>
+            <tr>
+                <td></td>
+                <td>
+                    <input type="button" value="Submit" onclick = "validateForm()" onclick="validateJasaKirim()">
+                    <input type="button" value="Reset" onclick="resetPage()">
+                </td>
+            </tr>
+        </table>
+    </form>
+</body>
+</html>

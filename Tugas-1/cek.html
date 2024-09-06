@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Document</title>
+    <title>Form Tambah Data Produk</title>
+    <script>
+        function validateForm() {
+            var isValid = true;
+            var name = document.forms["formLogin"]["fName"];
+            var desc = document.forms["formLogin"]["fDesc"];
+            if(name.checkValidity() == false || desc.checkValidity() == false){
+                document.getElementById("errName").innerHTML = name.validationMessage;
+                document.getElementById("errDesc").innerHTML = desc.validationMessage;
+                return false;
+            }
+
+            return isValid;
+        }
+    </script>
+</head>
+<body>
+    <form name="formLogin" action="process.php" method="post">
+        <table>
+            <tr>
+                <td>Nama Produk:</td>
+                <td>
+                    <input type="text" name="fName" required="required" minlength="5" maxlength="30">
+                    <span id="errName"></span>
+                </td>
+            </tr>
+            <tr>
+                <td>Deskripsi:</td>
+                <td>
+                    <textarea name="fDesc" required="required" rows="10" cols="30" minlength="5" maxlength="30"></textarea>
+                    <span id="errDesc"></span>
+                </td>
+            </tr>
+        </table>
+        <input type="button" value="Submit" onclick = "validateForm()">
+    </form>
+</body>
+</html>
